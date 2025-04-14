@@ -56,4 +56,24 @@ route.post(
   }
 );
 
+route.post(
+  "/cancel",
+  async (req: Request<{}, {}, CreateReservationBody>, res: Response) => {
+    const { userId, roomId } = req.body;
+
+    try {
+      const cancelReservation = await pool.query(
+        `Delete FROM reservations where user_id = $1 AND room_id = $2`,
+        [userId, roomId]
+      );
+      res.status(201).send({
+        mensagem: "Agendamento cancelado com sucesso",
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ erro: `Erro ao cancelar reserva: ${err}` });
+    }
+  }
+);
+
 module.exports = route;
