@@ -1,4 +1,6 @@
 import express, { Request, Response } from "express";
+import { pool } from "../db";
+
 const route = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -17,17 +19,20 @@ route.post(
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
 
-    const newUser = {
-      name: name,
-      email: email,
-      password_hash: password_hash,
-      role: role,
-    };
+    try {
+      const newUser = await pool.query(
+        "INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING *",
+        [name, email, password_hash, role]
+      );
 
-    res.status(200).send({
-      mensagem: "Usuário criado com sucesso",
-      newUser: newUser,
-    });
+      res.status(201).send({
+        mensagem: "Usuário criado com sucesso",
+        newUser: newUser.rows[0],
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ erro: `Erro ao criar usuário: ${err}` });
+    }
   }
 );
 

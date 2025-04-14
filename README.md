@@ -7,5 +7,5 @@ Sistema feito para estudo de sistemas BackEnd utilizando nodeJs.
 
 - NodeJs
 - Express JS
-- PostgreSQL
-- BCRYP
+- PostgreSQL (pg)
+- BCRYPT
