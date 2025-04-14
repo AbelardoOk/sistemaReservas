@@ -36,4 +36,13 @@ route.post(
   }
 );
 
+route.get("/salas", async (req: Request, res: Response) => {
+  try {
+    const FreeRooms = await pool.query("SELECT * FROM rooms");
+    res.status(200).json({ rooms: FreeRooms });
+  } catch (err) {
+    res.status(500).json({ erro: `Erro ao procurar salas: ${err}` });
+  }
+});
+
 module.exports = route;
